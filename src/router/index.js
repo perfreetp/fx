@@ -61,20 +61,18 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   const userStore = useUserStore()
   
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
-    next({ name: 'Login', query: { redirect: to.fullPath } })
-    return
+    return { name: 'Login', query: { redirect: to.fullPath } }
   }
   
   if (to.meta.role && userStore.currentUser?.role !== to.meta.role) {
-    next({ name: 'Dashboard' })
-    return
+    return { name: 'Dashboard' }
   }
   
-  next()
+  return
 })
 
 export default router

@@ -1,7 +1,7 @@
 <template>
   <div class="layout-container">
-    <el-aside :width="isCollapse ? '64px' : '220px'" style="background-color: #304156;">
-      <div style="height: 60px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1);">
+    <el-aside :width="isCollapse ? '64px' : '220px'" style="background-color: #304156; display: flex; flex-direction: column; height: 100vh;">
+      <div style="height: 60px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;">
         <el-icon v-if="isCollapse" :size="24"><Promotion /></el-icon>
         <span v-else>低空飞行运营</span>
       </div>
@@ -14,6 +14,7 @@
         active-text-color="#409eff"
         router
         class="sidebar-menu"
+        style="flex: 1; overflow-y: auto; overflow-x: hidden; border-right: none;"
       >
         <el-menu-item index="/dashboard">
           <el-icon><DataAnalysis /></el-icon>
