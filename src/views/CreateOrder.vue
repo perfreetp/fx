@@ -71,32 +71,39 @@
               style="width: 100%;"
             />
           </el-form-item>
-          
-          <el-form-item label="飞行区域" prop="area" required>
-            <div style="position: relative;">
-              <MapPlanner v-model="orderForm.area" />
-              <div
-                v-if="orderForm.area"
-                style="
-                  margin-top: 12px;
-                  padding: 12px;
-                  background: #f5f7fa;
-                  border-radius: 8px;
-                  display: flex;
-                  gap: 24px;
-                "
-              >
-                <span>
-                  <el-icon color="#409eff"><Location /></el-icon>
-                  区域类型：{{ orderForm.area.type === 'polygon' ? '多边形' : '圆形' }}
-                </span>
-                <span>
-                  <el-icon color="#409eff"><DataLine /></el-icon>
-                  区域面积：{{ orderForm.area.areaSize?.toFixed(2) || 0 }} km²
-                </span>
-              </div>
-            </div>
-          </el-form-item>
+        </el-form>
+        
+        <div style="margin-top: 20px;">
+          <div style="display: flex; align-items: center; margin-bottom: 12px;">
+            <span style="width: 120px; font-weight: 500; color: #606266;">
+              <span style="color: #f56c6c; margin-right: 4px;">*</span>
+              飞行区域
+            </span>
+          </div>
+          <MapPlanner v-model="orderForm.area" />
+          <div
+            v-if="orderForm.area"
+            style="
+              margin-top: 12px;
+              padding: 12px;
+              background: #f5f7fa;
+              border-radius: 8px;
+              display: flex;
+              gap: 24px;
+            "
+          >
+            <span>
+              <el-icon color="#409eff"><Location /></el-icon>
+              区域类型：{{ orderForm.area.type === 'polygon' ? '多边形' : '圆形' }}
+            </span>
+            <span>
+              <el-icon color="#409eff"><DataLine /></el-icon>
+              区域面积：{{ orderForm.area.areaSize?.toFixed(2) || 0 }} km²
+            </span>
+          </div>
+        </div>
+        
+        <el-form style="margin-top: 20px;">
           
           <el-form-item>
             <el-button type="primary" :loading="submitting" size="large" @click="handleSubmit">

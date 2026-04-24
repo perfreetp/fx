@@ -1,17 +1,17 @@
 <template>
-  <div ref="mapContainer" class="map-container" style="height: 500px; position: relative; width: 100%;">
+  <div class="map-planner-wrapper">
     <div class="map-toolbar">
       <el-button-group>
         <el-button :type="toolMode === 'pan' ? 'primary' : 'default'" @click="setToolMode('pan')">
-          <el-icon><Hand /></el-icon>
+          <el-icon><View /></el-icon>
           浏览
         </el-button>
         <el-button :type="toolMode === 'polygon' ? 'primary' : 'default'" @click="setToolMode('polygon')">
-          <el-icon><Share /></el-icon>
+          <el-icon><Edit /></el-icon>
           画多边形
         </el-button>
         <el-button :type="toolMode === 'circle' ? 'primary' : 'default'" @click="setToolMode('circle')">
-          <el-icon><CircleCheck /></el-icon>
+          <el-icon><CirclePlus /></el-icon>
           画圆形
         </el-button>
       </el-button-group>
@@ -24,6 +24,7 @@
         清除
       </el-button>
     </div>
+    <div ref="mapContainer" class="map-box"></div>
   </div>
 </template>
 
@@ -94,13 +95,20 @@ const initMap = () => {
   if (!mapContainer.value || isInitialized.value) return
   
   try {
-    map.value = L.map(mapContainer.value).setView([39.908, 116.397], 13)
+    console.log('MapPlanner: Initializing map...')
     
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
+    map.value = L.map(mapContainer.value, {
+      center: [39.908, 116.397],
+      zoom: 13
+    })
+    
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+      maxZoom: 19
     }).addTo(map.value)
     
     isInitialized.value = true
+    console.log('MapPlanner: Map initialized successfully')
     
     if (props.modelValue) {
       drawExistingArea(props.modelValue)
@@ -114,10 +122,11 @@ const initMap = () => {
     setTimeout(() => {
       if (map.value) {
         map.value.invalidateSize()
+        console.log('MapPlanner: Map invalidated')
       }
     }, 100)
   } catch (error) {
-    console.error('Map initialization error:', error)
+    console.error('MapPlanner: Map initialization error:', error)
   }
 }
 
@@ -359,9 +368,25 @@ const drawExistingArea = (areaData) => {
 }
 
 onMounted(() => {
+  console.log('MapPlanner: onMounted')
   nextTick(() => {
+    console.log('MapPlanner: nextTick, initializing map')
     initMap()
   })
+  
+  setTimeout(() => {
+    if (!isInitialized.value) {
+      console.log('MapPlanner: Retry map initialization')
+      initMap()
+    }
+  }, 300)
+  
+  setTimeout(() => {
+    if (map.value) {
+      map.value.invalidateSize()
+      console.log('MapPlanner: Delayed invalidateSize')
+    }
+  }, 800)
 })
 
 onUnmounted(() => {
@@ -384,3 +409,35 @@ watch(() => toolMode.value, (newVal) => {
   }
 })
 </script>
+
+<style>
+.map-planner-wrapper {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.map-box {
+  width: 100%;
+  height: 100%;
+}
+
+.map-toolbar {
+  position: absolute;
+  top: 10px;
+  left: 50px;
+  z-index: 1000;
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+.map-toolbar .el-button {
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+</style>
